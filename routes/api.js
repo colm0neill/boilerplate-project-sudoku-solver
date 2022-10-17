@@ -20,22 +20,30 @@ module.exports = function (app) {
         !/[a-i]/i.test(row) ||
         !/[1-9]/i.test(column)
       ){
-        console.log("invalid coordinate: >>");
+        console.log("Error 0: ",coordinate, row, column)
         res.json({error:"Invalid coordinate"});
         return;
       }
-      if(!/[1-9]/i.test(value)){
-        res.json({ error: "Invalid value"})
+      if((!/[1-9]/i.test(value)) || (value > 9) || (value == 0)){
+        console.log("Error 1: ", value)
+        res.json({ error: 'Invalid value' })
         return;
       }
       if(puzzle.length != 81){
+        console.log("Error 2: ", puzzle)
         res.json({ error: "Expected puzzle to be 81 characters long"})
         return;
       }
-      if(!/[^0-9]/g.test(puzzle)){
-        res.json({ error: "Invalid characters in puzzle"})
+      if(/[^0-9.]/g.test(puzzle)){
+        console.log("Error 3: ", puzzle, " - ",row, column, value)
+        res.json({ error: 'Invalid characters in puzzle' })
         return;
       }
+      // if(/[^0-9.]/g.test(value)){
+      //   console.log("Error 4: ", puzzle, " - ",row, column, value)
+      //   res.json({ error: 'Invalid characters in puzzle' })
+      //   return;
+      // }
 
       let validCol = solver.checkColPlacement(puzzle, row, column, value);
       let validReg = solver.checkRegionPlacement(puzzle, row, column, value);
@@ -54,7 +62,7 @@ module.exports = function (app) {
         if(!validReg){
           conflicts.push("region");
         }
-        res.json({valid: false, conflict: conflicts})
+        res.json({ valid: false, conflict: conflicts})
       }
 
     });

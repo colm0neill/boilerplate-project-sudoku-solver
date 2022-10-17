@@ -1,6 +1,17 @@
 class SudokuSolver {
 
   validate(puzzleString) {
+
+    if(puzzleString.length != 81){
+      console.log("Error VAL-2: ", puzzleString)
+      return false;
+    }
+    if(/[^0-9.]/g.test(puzzleString)){
+      console.log("Error VAL-3: ", puzzleString)
+     
+      return false;
+    }
+  return true;
   }
 
   letterToNumber(row){
@@ -36,7 +47,7 @@ class SudokuSolver {
     }
     for(let i = 0; i < 9; i++){
       if(grid[row-1][i] == value){
-        return true;
+        return false;
       }
     }
     return true;
@@ -56,17 +67,17 @@ class SudokuSolver {
     return true;
   }
 
-  checkRegionPlacement(puzzleString, row, col, value) {
+  checkRegionPlacement(puzzleString, row, column, value) {
     let grid = this.transform_puzzle(puzzleString);
     row = this.letterToNumber(row);
-    if(grid[row - 1][col - 1] !==0){
+    if(grid[row - 1][column - 1] !==0){
       return false;
     }
     let start_row = row - (row % 3),
-    start_col = col  - (col %3 );
-    for(let i = 0; i< 3; i++)
-      for(let k = 0; k< 3; k++)
-        if(grid[i + start_col][k+ start_col] == value) return false;
+    start_col = column  - (column % 3 );
+    for(let i = 0; i < 3; i++)
+      for(let k = 0; k < 3; k++)
+        if(grid[i + start_row][k+ start_col] == value) return false;
     return true;
   }
 
@@ -142,6 +153,12 @@ class SudokuSolver {
 
 
   solve(puzzleString) {
+
+    let valid = this.validate(puzzleString);
+    if(!valid){
+      return false;
+    }
+
    let grid = this.transform_puzzle(puzzleString);
    let solved = this.solve_suduko(grid, 0, 0);
    if(!solved){
